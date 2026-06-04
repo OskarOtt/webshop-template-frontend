@@ -1,0 +1,29 @@
+.home-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+}
+
+.home-page__title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 32px;
+}
+
+.home-page__status {
+  font-size: 16px;
+  color: #6b7280;
+  text-align: center;
+  padding: 48px 0;
+}
+
+.home-page__status--error {
+  color: #dc2626;
+}
+
+.home-page__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px;
+}

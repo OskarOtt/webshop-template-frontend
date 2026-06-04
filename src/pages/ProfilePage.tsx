@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import "./ProfilePage.css";
+import "../styles/ProfilePage.css";
 
 export default function ProfilePage() {
   const { user, logout } = useAuth();
@@ -41,12 +41,21 @@ export default function ProfilePage() {
           )}
         </dl>
 
+        {user.role === "ADMIN" && (
+          <button
+            className="profile__admin-btn"
+            onClick={() => navigate("/admin/articles")}
+          >
+            Manage Articles
+          </button>
+        )}
+
         <button
-          className="profile__logout-btn"
-          onClick={() => {
-            logout();
-            navigate("/");
-          }}
+            className="profile__logout-btn"
+            onClick={() => {
+              logout();
+              navigate("/");
+            }}
         >
           Log out
         </button>

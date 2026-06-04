@@ -1,0 +1,132 @@
+.admin-articles {
+  padding: 40px 24px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.admin-articles__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.admin-articles__title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.admin-articles__add-btn {
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.admin-articles__add-btn:hover {
+  background: #4f46e5;
+}
+
+.admin-articles__error {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+}
+
+.admin-articles__loading,
+.admin-articles__empty {
+  color: #6b7280;
+  font-size: 15px;
+  margin-top: 32px;
+  text-align: center;
+}
+
+.admin-articles__table-wrapper {
+  overflow-x: auto;
+}
+
+.admin-articles__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.admin-articles__table th {
+  text-align: left;
+  padding: 10px 14px;
+  background: #f9fafb;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.admin-articles__table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f3f4f6;
+  color: #374151;
+  vertical-align: middle;
+}
+
+.admin-articles__table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-articles__table tr:hover td {
+  background: #fafafa;
+}
+
+.admin-articles__id {
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+.admin-articles__name {
+  font-weight: 500;
+  color: #111827;
+}
+
+.admin-articles__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-articles__btn {
+  padding: 5px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s;
+}
+
+.admin-articles__btn--edit {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+
+.admin-articles__btn--edit:hover {
+  background: #c7d2fe;
+}
+
+.admin-articles__btn--delete {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.admin-articles__btn--delete:hover {
+  background: #fecaca;
+}

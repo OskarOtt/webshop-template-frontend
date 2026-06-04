@@ -82,3 +82,20 @@
   background: #fef2f2;
   border-color: #fca5a5;
 }
+
+.profile__admin-btn {
+  padding: 10px 24px;
+  background: #6366f1;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s;
+  width: 100%;
+}
+
+.profile__admin-btn:hover {
+  background: #4f46e5;
+}

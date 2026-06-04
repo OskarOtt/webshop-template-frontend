@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import LoginModal from "./LoginModal";
-import "./Header.css";
+import "../styles/Header.css";
 
 export default function Header() {
   const { user } = useAuth();

@@ -1,7 +1,7 @@
 import { useState, useEffect, type FormEvent } from "react";
 import { createPortal } from "react-dom";
 import { useAuth } from "../context/AuthContext";
-import "./LoginModal.css";
+import "../styles/LoginModal.css";
 
 interface Props {
   open: boolean;

@@ -293,6 +293,7 @@ export interface components {
             lastName?: string;
             email?: string;
             phone?: string;
+            role?: string;
         };
     };
     responses: never;

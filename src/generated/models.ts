@@ -132,6 +132,7 @@ export class UserDto {
   lastName?: string;
   email?: string;
   phone?: string;
+  role?: string;
 
   constructor(data?: Partial<UserDto>) {
     if (data) Object.assign(this, data);

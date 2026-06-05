@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { getArticles, createArticle, updateArticle, deleteArticle } from "../api/articles";
-import type { ArticleRequest, ArticleResponse } from "../generated/models";
-import ArticleFormModal from "../components/ArticleFormModal";
+import { getArticles, deleteArticle } from "../api/articles";
+import type { ArticleResponse } from "../generated/models";
 import "../styles/AdminArticlesPage.css";
 
 export default function AdminArticlesPage() {
@@ -13,9 +12,6 @@ export default function AdminArticlesPage() {
   const [articles, setArticles] = useState<ArticleResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editingArticle, setEditingArticle] = useState<ArticleResponse | null>(null);
 
   useEffect(() => {
     if (!user || user.role !== "ADMIN") {
@@ -43,22 +39,11 @@ export default function AdminArticlesPage() {
   }
 
   function openCreate() {
-    setEditingArticle(null);
-    setModalOpen(true);
+    navigate("/admin/articles/new");
   }
 
   function openEdit(article: ArticleResponse) {
-    setEditingArticle(article);
-    setModalOpen(true);
-  }
-
-  async function handleSave(data: ArticleRequest) {
-    if (editingArticle?.id != null) {
-      await updateArticle(editingArticle.id, data);
-    } else {
-      await createArticle(data);
-    }
-    await fetchArticles();
+    navigate(`/admin/articles/${article.id}/edit`);
   }
 
   async function handleDelete(article: ArticleResponse) {
@@ -125,13 +110,6 @@ export default function AdminArticlesPage() {
           </table>
         </div>
       )}
-
-      <ArticleFormModal
-        open={modalOpen}
-        article={editingArticle}
-        onClose={() => setModalOpen(false)}
-        onSave={handleSave}
-      />
     </main>
   );
 }

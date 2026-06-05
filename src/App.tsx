@@ -3,6 +3,7 @@ import Header from "./components/Header";
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import AdminArticlesPage from "./pages/AdminArticlesPage";
+import AdminArticleFormPage from "./pages/AdminArticleFormPage";
 import ArticlePage from "./pages/ArticlePage";
 
 function App() {
@@ -14,6 +15,8 @@ function App() {
         <Route path="/articles/:id" element={<ArticlePage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/admin/articles" element={<AdminArticlesPage />} />
+        <Route path="/admin/articles/new" element={<AdminArticleFormPage />} />
+        <Route path="/admin/articles/:id/edit" element={<AdminArticleFormPage />} />
       </Routes>
     </BrowserRouter>
   );

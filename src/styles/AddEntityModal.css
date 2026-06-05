@@ -1,32 +1,30 @@
-.afm-overlay {
+.aem-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 1100;
 }
 
-.afm-dialog {
+.aem-dialog {
   background: #fff;
   border-radius: 12px;
-  padding: 32px;
+  padding: 28px;
   width: 100%;
-  max-width: 520px;
-  max-height: 90vh;
-  overflow-y: auto;
+  max-width: 400px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
 }
 
-.afm-title {
-  font-size: 20px;
+.aem-title {
+  font-size: 18px;
   font-weight: 700;
   color: #111827;
   margin: 0 0 20px;
 }
 
-.afm-error {
+.aem-error {
   background: #fef2f2;
   color: #dc2626;
   border: 1px solid #fecaca;
@@ -36,22 +34,22 @@
   margin-bottom: 16px;
 }
 
-.afm-form {
+.aem-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
-.afm-label {
+.aem-label {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   font-size: 14px;
   font-weight: 500;
   color: #374151;
 }
 
-.afm-input {
+.aem-input {
   border: 1px solid #d1d5db;
   border-radius: 6px;
   padding: 8px 12px;
@@ -61,30 +59,24 @@
   transition: border-color 0.15s;
 }
 
-.afm-input:focus {
+.aem-input:focus {
   border-color: #6366f1;
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
 
-.afm-textarea {
-  resize: vertical;
-  min-height: 80px;
+.aem-hint {
+  font-size: 0.75rem;
+  color: #6b7280;
 }
 
-.afm-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.afm-actions {
+.aem-actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
-.afm-btn {
+.aem-btn {
   padding: 9px 20px;
   border-radius: 7px;
   font-size: 14px;
@@ -94,31 +86,25 @@
   transition: background 0.15s, opacity 0.15s;
 }
 
-.afm-btn:disabled {
+.aem-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.afm-btn--cancel {
+.aem-btn--cancel {
   background: #f3f4f6;
   color: #374151;
 }
 
-.afm-btn--cancel:hover:not(:disabled) {
+.aem-btn--cancel:hover:not(:disabled) {
   background: #e5e7eb;
 }
 
-.afm-btn--save {
+.aem-btn--save {
   background: #6366f1;
   color: #fff;
 }
 
-.afm-btn--save:hover:not(:disabled) {
+.aem-btn--save:hover:not(:disabled) {
   background: #4f46e5;
-}
-
-.afm-hint {
-  font-size: 0.75rem;
-  color: #6b7280;
-  margin-top: 2px;
 }

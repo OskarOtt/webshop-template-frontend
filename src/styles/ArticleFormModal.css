@@ -116,3 +116,9 @@
 .afm-btn--save:hover:not(:disabled) {
   background: #4f46e5;
 }
+
+.afm-hint {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 2px;
+}

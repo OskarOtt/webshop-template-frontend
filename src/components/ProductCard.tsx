@@ -19,16 +19,16 @@ export default function ProductCard({ article }: ProductCardProps) {
       aria-label={article.name}
     >
       <div className="product-card__image-wrapper">
-        {article.imageUrl ? (
-          <img className="product-card__image" src={article.imageUrl} alt={article.name ?? "Product"} />
+        {article.images?.[0] ? (
+          <img className="product-card__image" src={article.images[0]} alt={article.name ?? "Product"} />
         ) : (
           <div className="product-card__image-placeholder" aria-hidden="true" />
         )}
       </div>
 
       <div className="product-card__body">
-        {article.category && (
-          <span className="product-card__category">{article.category}</span>
+        {article.category?.name && (
+          <span className="product-card__category">{article.category.name}</span>
         )}
         <h2 className="product-card__name">{article.name ?? "Unnamed product"}</h2>
         <p className="product-card__price">

@@ -21,6 +21,44 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/categories/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get category by ID */
+        get: operations["getById"];
+        /** Update a category (ADMIN only) */
+        put: operations["update"];
+        post?: never;
+        /** Delete a category (ADMIN only) */
+        delete: operations["delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/brands/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get brand by ID */
+        get: operations["getById_1"];
+        /** Update a brand (ADMIN only) */
+        put: operations["update_1"];
+        post?: never;
+        /** Delete a brand (ADMIN only) */
+        delete: operations["delete_1"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/articles/{id}": {
         parameters: {
             query?: never;
@@ -29,12 +67,12 @@ export interface paths {
             cookie?: never;
         };
         /** Get article by ID */
-        get: operations["getById"];
+        get: operations["getById_2"];
         /** Update an article (ADMIN only) */
-        put: operations["update"];
+        put: operations["update_2"];
         post?: never;
         /** Delete an article (ADMIN only) */
-        delete: operations["delete"];
+        delete: operations["delete_2"];
         options?: never;
         head?: never;
         patch?: never;
@@ -92,6 +130,42 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all root categories */
+        get: operations["getRoots"];
+        put?: never;
+        /** Create a new category (ADMIN only) */
+        post: operations["create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/brands": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all brands */
+        get: operations["getAll"];
+        put?: never;
+        /** Create a new brand (ADMIN only) */
+        post: operations["create_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/register": {
         parameters: {
             query?: never;
@@ -134,10 +208,10 @@ export interface paths {
             cookie?: never;
         };
         /** Get all articles */
-        get: operations["getAll"];
+        get: operations["getAll_1"];
         put?: never;
         /** Create a new article (ADMIN only) */
-        post: operations["create"];
+        post: operations["create_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -153,6 +227,23 @@ export interface paths {
         };
         /** Get order by ID */
         get: operations["getOrder"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/categories/{id}/children": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get sub-categories of a category */
+        get: operations["getChildren"];
         put?: never;
         post?: never;
         delete?: never;
@@ -178,14 +269,14 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/articles/category/{category}": {
+    "/articles/category/{categoryId}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get articles by category */
+        /** Get articles by category ID */
         get: operations["getByCategory"];
         put?: never;
         post?: never;
@@ -235,6 +326,31 @@ export interface components {
             /** Format: date-time */
             paidAt?: string;
         };
+        CategoryResponse: {
+            /** Format: int64 */
+            id?: number;
+            name?: string;
+            /** Format: int64 */
+            parentId?: number;
+            parentName?: string;
+        };
+        CategoryRequest: {
+            name?: string;
+            /** Format: int64 */
+            parentId?: number;
+        };
+        BrandResponse: {
+            /** Format: int64 */
+            id?: number;
+            name?: string;
+            logoUrl?: string;
+            description?: string;
+        };
+        BrandRequest: {
+            name?: string;
+            logoUrl?: string;
+            description?: string;
+        };
         ArticleResponse: {
             /** Format: int64 */
             id?: number;
@@ -243,8 +359,14 @@ export interface components {
             price?: number;
             /** Format: int32 */
             stockQuantity?: number;
-            category?: string;
-            imageUrl?: string;
+            category?: components["schemas"]["CategoryResponse"];
+            brand?: components["schemas"]["BrandResponse"];
+            images?: string[];
+            sku?: string;
+            size?: string;
+            weight?: number;
+            color?: string;
+            tags?: string[];
             /** Format: date-time */
             createdAt?: string;
             /** Format: date-time */
@@ -256,8 +378,16 @@ export interface components {
             price?: number;
             /** Format: int32 */
             stockQuantity?: number;
-            category?: string;
-            imageUrl?: string;
+            /** Format: int64 */
+            categoryId?: number;
+            /** Format: int64 */
+            brandId?: number;
+            images?: string[];
+            sku?: string;
+            size?: string;
+            weight?: number;
+            color?: string;
+            tags?: string[];
         };
         CheckoutResponse: {
             sessionUrl?: string;
@@ -359,12 +489,204 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ArticleResponse"];
+                    "*/*": components["schemas"]["CategoryResponse"];
                 };
             };
         };
     };
     update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CategoryRequest"];
+            };
+        };
+        responses: {
+            /** @description Category updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CategoryResponse"];
+                };
+            };
+            /** @description Access denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Category not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Category deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Category not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getById_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BrandResponse"];
+                };
+            };
+        };
+    };
+    update_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BrandRequest"];
+            };
+        };
+        responses: {
+            /** @description Brand updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BrandResponse"];
+                };
+            };
+            /** @description Access denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Brand not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    delete_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Brand deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Brand not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getById_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ArticleResponse"];
+                };
+            };
+        };
+    };
+    update_2: {
         parameters: {
             query?: never;
             header?: never;
@@ -404,7 +726,7 @@ export interface operations {
             };
         };
     };
-    delete: {
+    delete_2: {
         parameters: {
             query?: never;
             header?: never;
@@ -550,6 +872,108 @@ export interface operations {
             };
         };
     };
+    getRoots: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CategoryResponse"][];
+                };
+            };
+        };
+    };
+    create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CategoryRequest"];
+            };
+        };
+        responses: {
+            /** @description Category created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CategoryResponse"];
+                };
+            };
+            /** @description Access denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BrandResponse"][];
+                };
+            };
+        };
+    };
+    create_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BrandRequest"];
+            };
+        };
+        responses: {
+            /** @description Brand created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["BrandResponse"];
+                };
+            };
+            /** @description Access denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     register: {
         parameters: {
             query?: never;
@@ -612,7 +1036,7 @@ export interface operations {
             };
         };
     };
-    getAll: {
+    getAll_1: {
         parameters: {
             query?: never;
             header?: never;
@@ -632,7 +1056,7 @@ export interface operations {
             };
         };
     };
-    create: {
+    create_2: {
         parameters: {
             query?: never;
             header?: never;
@@ -692,6 +1116,28 @@ export interface operations {
             };
         };
     };
+    getChildren: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CategoryResponse"][];
+                };
+            };
+        };
+    };
     me: {
         parameters: {
             query?: never;
@@ -724,7 +1170,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                category: string;
+                categoryId: number;
             };
             cookie?: never;
         };

@@ -95,6 +95,7 @@ export default function AdminArticlesPage() {
               <tr>
                 <th>ID</th>
                 <th>Name</th>
+                <th>Brand</th>
                 <th>Category</th>
                 <th>Price</th>
                 <th>Stock</th>
@@ -106,7 +107,8 @@ export default function AdminArticlesPage() {
                 <tr key={article.id}>
                   <td className="admin-articles__id">{article.id}</td>
                   <td className="admin-articles__name">{article.name}</td>
-                  <td>{article.category ?? "—"}</td>
+                  <td>{article.brand?.name ?? "—"}</td>
+                  <td>{article.category?.name ?? "—"}</td>
                   <td>{article.price != null ? `${article.price.toFixed(2)} kr` : "—"}</td>
                   <td>{article.stockQuantity ?? 0}</td>
                   <td className="admin-articles__actions">

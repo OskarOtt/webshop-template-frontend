@@ -131,3 +131,42 @@
   background: #d1d5db;
   cursor: not-allowed;
 }
+
+.article-page__brand {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+}
+
+.article-page__meta {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 1rem;
+  margin: 0.75rem 0;
+  font-size: 0.9rem;
+}
+
+.article-page__meta dt {
+  font-weight: 600;
+  color: #374151;
+}
+
+.article-page__meta dd {
+  margin: 0;
+  color: #6b7280;
+}
+
+.article-page__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+}
+
+.article-page__tag {
+  background: #e0e7ff;
+  color: #4338ca;
+  border-radius: 9999px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.8rem;
+}

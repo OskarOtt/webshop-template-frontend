@@ -42,14 +42,61 @@ export class PaymentInfoResponse {
   }
 }
 
+export class CategoryResponse {
+  id?: number;
+  name?: string;
+  parentId?: number;
+  parentName?: string;
+
+  constructor(data?: Partial<CategoryResponse>) {
+    if (data) Object.assign(this, data);
+  }
+}
+
+export class CategoryRequest {
+  name?: string;
+  parentId?: number;
+
+  constructor(data?: Partial<CategoryRequest>) {
+    if (data) Object.assign(this, data);
+  }
+}
+
+export class BrandResponse {
+  id?: number;
+  name?: string;
+  logoUrl?: string;
+  description?: string;
+
+  constructor(data?: Partial<BrandResponse>) {
+    if (data) Object.assign(this, data);
+  }
+}
+
+export class BrandRequest {
+  name?: string;
+  logoUrl?: string;
+  description?: string;
+
+  constructor(data?: Partial<BrandRequest>) {
+    if (data) Object.assign(this, data);
+  }
+}
+
 export class ArticleResponse {
   id?: number;
   name?: string;
   description?: string;
   price?: number;
   stockQuantity?: number;
-  category?: string;
-  imageUrl?: string;
+  category?: CategoryResponse;
+  brand?: BrandResponse;
+  images?: string[];
+  sku?: string;
+  size?: string;
+  weight?: number;
+  color?: string;
+  tags?: string[];
   createdAt?: string;
   updatedAt?: string;
 
@@ -63,8 +110,14 @@ export class ArticleRequest {
   description?: string;
   price?: number;
   stockQuantity?: number;
-  category?: string;
-  imageUrl?: string;
+  categoryId?: number;
+  brandId?: number;
+  images?: string[];
+  sku?: string;
+  size?: string;
+  weight?: number;
+  color?: string;
+  tags?: string[];
 
   constructor(data?: Partial<ArticleRequest>) {
     if (data) Object.assign(this, data);

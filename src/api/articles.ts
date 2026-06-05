@@ -15,9 +15,9 @@ export async function getArticle(id: number): Promise<ArticleResponse | undefine
   return data;
 }
 
-export async function getArticlesByCategory(category: string): Promise<ArticleResponse[] | undefined> {
-  const { data, error } = await apiClient.GET("/articles/category/{category}", {
-    params: { path: { category } },
+export async function getArticlesByCategory(categoryId: number): Promise<ArticleResponse[] | undefined> {
+  const { data, error } = await apiClient.GET("/articles/category/{categoryId}", {
+    params: { path: { categoryId } },
   });
   if (error) throw error;
   return data;

@@ -34,16 +34,16 @@ export default function ArticlePage() {
 
       <div className="article-page__content">
         <div className="article-page__image-wrapper">
-          {article.imageUrl ? (
-            <img className="article-page__image" src={article.imageUrl} alt={article.name ?? "Product"} />
+          {article.images?.[0] ? (
+            <img className="article-page__image" src={article.images[0]} alt={article.name ?? "Product"} />
           ) : (
             <div className="article-page__image-placeholder" aria-hidden="true" />
           )}
         </div>
 
         <div className="article-page__details">
-          {article.category && (
-            <span className="article-page__category">{article.category}</span>
+          {article.category?.name && (
+            <span className="article-page__category">{article.category.name}</span>
           )}
           <h1 className="article-page__name">{article.name}</h1>
 
@@ -53,6 +53,45 @@ export default function ArticlePage() {
 
           {article.description && (
             <p className="article-page__description">{article.description}</p>
+          )}
+
+          {article.brand?.name && (
+            <p className="article-page__brand">Brand: {article.brand.name}</p>
+          )}
+
+          <dl className="article-page__meta">
+            {article.sku && (
+              <>
+                <dt>SKU</dt>
+                <dd>{article.sku}</dd>
+              </>
+            )}
+            {article.size && (
+              <>
+                <dt>Size</dt>
+                <dd>{article.size}</dd>
+              </>
+            )}
+            {article.color && (
+              <>
+                <dt>Color</dt>
+                <dd>{article.color}</dd>
+              </>
+            )}
+            {article.weight != null && (
+              <>
+                <dt>Weight</dt>
+                <dd>{article.weight} kg</dd>
+              </>
+            )}
+          </dl>
+
+          {article.tags && article.tags.length > 0 && (
+            <div className="article-page__tags">
+              {article.tags.map((tag) => (
+                <span key={tag} className="article-page__tag">{tag}</span>
+              ))}
+            </div>
           )}
 
           <p className="article-page__stock">

@@ -1,5 +1,5 @@
 import { apiClient } from "./client";
-import type { LoginRequest, RegisterRequest, TokenResponse, UserDto } from "../generated/models";
+import type { LoginRequest, RefreshTokenRequest, RegisterRequest, TokenResponse, UserDto } from "../generated/models";
 
 export async function login(body: LoginRequest): Promise<TokenResponse | undefined> {
   const { data, error } = await apiClient.POST("/auth/login", { body });
@@ -13,10 +13,18 @@ export async function register(body: RegisterRequest): Promise<TokenResponse | u
   return data;
 }
 
-export async function getMe(token: string): Promise<UserDto | undefined> {
-  const { data, error } = await apiClient.GET("/auth/me", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+export async function refreshToken(body: RefreshTokenRequest): Promise<TokenResponse | undefined> {
+  const { data, error } = await apiClient.POST("/auth/refresh", { body });
+  if (error) throw error;
+  return data;
+}
+
+export async function logout(body: RefreshTokenRequest): Promise<void> {
+  await apiClient.POST("/auth/logout", { body });
+}
+
+export async function getMe(): Promise<UserDto | undefined> {
+  const { data, error } = await apiClient.GET("/auth/me", {});
   if (error) throw error;
   return data;
 }

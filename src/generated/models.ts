@@ -62,6 +62,40 @@ export class CategoryRequest {
   }
 }
 
+export class CartItemResponse {
+  id?: number;
+  articleId?: number;
+  articleName?: string;
+  mainImageUrl?: string;
+  unitPrice?: number;
+  quantity?: number;
+  lineTotal?: number;
+
+  constructor(data?: Partial<CartItemResponse>) {
+    if (data) Object.assign(this, data);
+  }
+}
+
+export class CartResponse {
+  id?: number;
+  userId?: number;
+  items?: CartItemResponse[];
+  itemCount?: number;
+  totalPrice?: number;
+
+  constructor(data?: Partial<CartResponse>) {
+    if (data) Object.assign(this, data);
+  }
+}
+
+export class UpdateCartItemRequest {
+  quantity?: number;
+
+  constructor(data?: Partial<UpdateCartItemRequest>) {
+    if (data) Object.assign(this, data);
+  }
+}
+
 export class BrandResponse {
   id?: number;
   name?: string;
@@ -97,6 +131,7 @@ export class ArticleResponse {
   weight?: number;
   color?: string;
   tags?: string[];
+  status?: "ACTIVE" | "DISABLED" | "DELETED";
   createdAt?: string;
   updatedAt?: string;
 
@@ -118,6 +153,7 @@ export class ArticleRequest {
   weight?: number;
   color?: string;
   tags?: string[];
+  status?: "ACTIVE" | "DISABLED" | "DELETED";
 
   constructor(data?: Partial<ArticleRequest>) {
     if (data) Object.assign(this, data);
@@ -150,8 +186,18 @@ export class OrderRequest {
   }
 }
 
+export class AddToCartRequest {
+  articleId?: number;
+  quantity?: number;
+
+  constructor(data?: Partial<AddToCartRequest>) {
+    if (data) Object.assign(this, data);
+  }
+}
+
 export class TokenResponse {
   token?: string;
+  refreshToken?: string;
   type?: string;
   expiresIn?: number;
 
@@ -167,6 +213,14 @@ export class RegisterRequest {
   password?: string;
 
   constructor(data?: Partial<RegisterRequest>) {
+    if (data) Object.assign(this, data);
+  }
+}
+
+export class RefreshTokenRequest {
+  refreshToken?: string;
+
+  constructor(data?: Partial<RefreshTokenRequest>) {
     if (data) Object.assign(this, data);
   }
 }

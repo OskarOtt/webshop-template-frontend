@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { getArticles, deleteArticle } from "../api/articles";
+import { getArticles, deleteArticle, changeArticleStatus } from "../api/articles";
 import type { ArticleResponse } from "../generated/models";
 import "../styles/AdminArticlesPage.css";
 
@@ -29,8 +29,12 @@ export default function AdminArticlesPage() {
     setLoading(true);
     setError(null);
     try {
-      const data = await getArticles();
-      setArticles(data ?? []);
+      const [active, disabled, deleted] = await Promise.all([
+        getArticles("ACTIVE"),
+        getArticles("DISABLED"),
+        getArticles("DELETED"),
+      ]);
+      setArticles([...(active ?? []), ...(disabled ?? []), ...(deleted ?? [])]);
     } catch {
       setError("Failed to load articles.");
     } finally {
@@ -46,11 +50,25 @@ export default function AdminArticlesPage() {
     navigate(`/admin/articles/${article.id}/edit`);
   }
 
+  async function handleToggleStatus(article: ArticleResponse) {
+    const newStatus = article.status === "ACTIVE" ? "DISABLED" : "ACTIVE";
+    try {
+      const updated = await changeArticleStatus(article.id!, newStatus);
+      if (updated) {
+        setArticles((prev) => prev.map((a) => (a.id === updated.id ? updated : a)));
+      }
+    } catch {
+      alert("Failed to update article status.");
+    }
+  }
+
   async function handleDelete(article: ArticleResponse) {
-    if (!window.confirm(`Delete "${article.name}"? This cannot be undone.`)) return;
+    if (!window.confirm(`Soft-delete "${article.name}"? This will mark it as DELETED.`)) return;
     try {
       await deleteArticle(article.id!);
-      setArticles((prev) => prev.filter((a) => a.id !== article.id));
+      setArticles((prev) =>
+        prev.map((a) => (a.id === article.id ? { ...a, status: "DELETED" as const } : a))
+      );
     } catch {
       alert("Failed to delete article.");
     }
@@ -84,25 +102,41 @@ export default function AdminArticlesPage() {
                 <th>Category</th>
                 <th>Price</th>
                 <th>Stock</th>
+                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {articles.map((article) => (
-                <tr key={article.id}>
+                <tr key={article.id} className={article.status === "DELETED" ? "admin-articles__row--deleted" : ""}>
                   <td className="admin-articles__id">{article.id}</td>
                   <td className="admin-articles__name">{article.name}</td>
                   <td>{article.brand?.name ?? "—"}</td>
                   <td>{article.category?.name ?? "—"}</td>
                   <td>{article.price != null ? `${article.price.toFixed(2)} kr` : "—"}</td>
                   <td>{article.stockQuantity ?? 0}</td>
+                  <td>
+                    <span className={`admin-articles__status admin-articles__status--${(article.status ?? "").toLowerCase()}`}>
+                      {article.status ?? "—"}
+                    </span>
+                  </td>
                   <td className="admin-articles__actions">
-                    <button className="admin-articles__btn admin-articles__btn--edit" onClick={() => openEdit(article)}>
-                      Edit
-                    </button>
-                    <button className="admin-articles__btn admin-articles__btn--delete" onClick={() => handleDelete(article)}>
-                      Delete
-                    </button>
+                    {article.status !== "DELETED" && (
+                      <>
+                        <button className="admin-articles__btn admin-articles__btn--edit" onClick={() => openEdit(article)}>
+                          Edit
+                        </button>
+                        <button
+                          className={`admin-articles__btn ${article.status === "ACTIVE" ? "admin-articles__btn--disable" : "admin-articles__btn--enable"}`}
+                          onClick={() => handleToggleStatus(article)}
+                        >
+                          {article.status === "ACTIVE" ? "Disable" : "Enable"}
+                        </button>
+                        <button className="admin-articles__btn admin-articles__btn--delete" onClick={() => handleDelete(article)}>
+                          Delete
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}

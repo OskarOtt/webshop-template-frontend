@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import type { ArticleResponse } from "../generated/models";
+import { useCart } from "../context/CartContext";
 import "../styles/ProductCard.css";
 
 interface ProductCardProps {
@@ -8,6 +9,18 @@ interface ProductCardProps {
 
 export default function ProductCard({ article }: ProductCardProps) {
   const navigate = useNavigate();
+  const { addItem } = useCart();
+
+  async function handleAddToCart(e: React.MouseEvent) {
+    e.stopPropagation();
+    await addItem({
+      articleId: article.id!,
+      quantity: 1,
+      articleName: article.name ?? "Product",
+      mainImageUrl: article.images?.[0],
+      unitPrice: article.price ?? 0,
+    });
+  }
 
   return (
     <article
@@ -34,6 +47,14 @@ export default function ProductCard({ article }: ProductCardProps) {
         <p className="product-card__price">
           {article.price != null ? `${article.price.toFixed(2)} kr` : "—"}
         </p>
+        <button
+          className="product-card__add-btn"
+          onClick={handleAddToCart}
+          disabled={!article.stockQuantity}
+          aria-label={`Add ${article.name} to cart`}
+        >
+          {article.stockQuantity ? "Add to Cart" : "Out of Stock"}
+        </button>
       </div>
     </article>
   );

@@ -40,6 +40,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/cart/items/{articleId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update quantity of a cart item (set to 0 to remove) */
+        put: operations["updateItem"];
+        post?: never;
+        /** Remove a specific item from the cart */
+        delete: operations["removeItem"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/brands/{id}": {
         parameters: {
             query?: never;
@@ -71,7 +89,7 @@ export interface paths {
         /** Update an article (ADMIN only) */
         put: operations["update_2"];
         post?: never;
-        /** Delete an article (ADMIN only) */
+        /** Soft-delete an article (ADMIN only) — sets status to DELETED */
         delete: operations["delete_2"];
         options?: never;
         head?: never;
@@ -148,6 +166,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/cart/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add an item to the cart (increments quantity if already present) */
+        post: operations["addItem"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/brands": {
         parameters: {
             query?: never;
@@ -183,6 +218,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Refresh access token using a valid refresh token */
+        post: operations["refresh"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Log out by revoking the refresh token */
+        post: operations["logout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/login": {
         parameters: {
             query?: never;
@@ -207,7 +276,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get all articles */
+        /** Get articles by status (defaults to ACTIVE). ADMIN required for non-ACTIVE statuses. */
         get: operations["getAll_1"];
         put?: never;
         /** Create a new article (ADMIN only) */
@@ -216,6 +285,23 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/articles/{id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Change article status to ACTIVE or DISABLED (ADMIN only) */
+        patch: operations["changeStatus"];
         trace?: never;
     };
     "/orders/{id}": {
@@ -252,6 +338,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/cart": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get current user's cart */
+        get: operations["getCart"];
+        put?: never;
+        post?: never;
+        /** Clear all items from the cart */
+        delete: operations["clearCart"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/me": {
         parameters: {
             query?: never;
@@ -276,7 +380,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get articles by category ID */
+        /** Get articles by category ID (defaults to ACTIVE) */
         get: operations["getByCategory"];
         put?: never;
         post?: never;
@@ -339,6 +443,32 @@ export interface components {
             /** Format: int64 */
             parentId?: number;
         };
+        CartItemResponse: {
+            /** Format: int64 */
+            id?: number;
+            /** Format: int64 */
+            articleId?: number;
+            articleName?: string;
+            mainImageUrl?: string;
+            unitPrice?: number;
+            /** Format: int32 */
+            quantity?: number;
+            lineTotal?: number;
+        };
+        CartResponse: {
+            /** Format: int64 */
+            id?: number;
+            /** Format: int64 */
+            userId?: number;
+            items?: components["schemas"]["CartItemResponse"][];
+            /** Format: int32 */
+            itemCount?: number;
+            totalPrice?: number;
+        };
+        UpdateCartItemRequest: {
+            /** Format: int32 */
+            quantity?: number;
+        };
         BrandResponse: {
             /** Format: int64 */
             id?: number;
@@ -367,6 +497,8 @@ export interface components {
             weight?: number;
             color?: string;
             tags?: string[];
+            /** @enum {string} */
+            status?: "ACTIVE" | "DISABLED" | "DELETED";
             /** Format: date-time */
             createdAt?: string;
             /** Format: date-time */
@@ -388,6 +520,8 @@ export interface components {
             weight?: number;
             color?: string;
             tags?: string[];
+            /** @enum {string} */
+            status?: "ACTIVE" | "DISABLED" | "DELETED";
         };
         CheckoutResponse: {
             sessionUrl?: string;
@@ -402,21 +536,33 @@ export interface components {
             items?: components["schemas"]["OrderItemRequest"][];
             shippingAddress?: string;
         };
+        AddToCartRequest: {
+            /** Format: int64 */
+            articleId?: number;
+            /** Format: int32 */
+            quantity?: number;
+        };
         TokenResponse: {
             token?: string;
+            refreshToken?: string;
             type?: string;
             /** Format: int64 */
             expiresIn?: number;
         };
         RegisterRequest: {
-            email?: string;
-            firstName?: string;
-            lastName?: string;
-            password?: string;
+            /** Format: email */
+            email: string;
+            firstName: string;
+            lastName: string;
+            password: string;
+        };
+        RefreshTokenRequest: {
+            refreshToken: string;
         };
         LoginRequest: {
-            email?: string;
-            password?: string;
+            /** Format: email */
+            email: string;
+            password: string;
         };
         UserDto: {
             firstName?: string;
@@ -560,6 +706,68 @@ export interface operations {
                 content?: never;
             };
             /** @description Category not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    updateItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                articleId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCartItemRequest"];
+            };
+        };
+        responses: {
+            /** @description Quantity updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CartResponse"];
+                };
+            };
+            /** @description Item not in cart */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    removeItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                articleId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Item removed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CartResponse"];
+                };
+            };
+            /** @description Item not in cart */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -737,7 +945,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Article deleted */
+            /** @description Article soft-deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -923,6 +1131,37 @@ export interface operations {
             };
         };
     };
+    addItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddToCartRequest"];
+            };
+        };
+        responses: {
+            /** @description Item added */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CartResponse"];
+                };
+            };
+            /** @description Invalid request or article unavailable */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getAll: {
         parameters: {
             query?: never;
@@ -996,8 +1235,68 @@ export interface operations {
                     "*/*": components["schemas"]["TokenResponse"];
                 };
             };
-            /** @description Username or email already taken */
+            /** @description Validation failed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Email already taken */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    refresh: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RefreshTokenRequest"];
+            };
+        };
+        responses: {
+            /** @description New token pair issued */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["TokenResponse"];
+                };
+            };
+            /** @description Refresh token invalid, expired, or revoked */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    logout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RefreshTokenRequest"];
+            };
+        };
+        responses: {
+            /** @description Logged out successfully */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -1027,6 +1326,13 @@ export interface operations {
                     "*/*": components["schemas"]["TokenResponse"];
                 };
             };
+            /** @description Validation failed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
             /** @description Invalid credentials */
             401: {
                 headers: {
@@ -1038,7 +1344,9 @@ export interface operations {
     };
     getAll_1: {
         parameters: {
-            query?: never;
+            query?: {
+                status?: "ACTIVE" | "DISABLED" | "DELETED";
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -1080,6 +1388,51 @@ export interface operations {
             };
             /** @description Access denied */
             403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    changeStatus: {
+        parameters: {
+            query: {
+                status: "ACTIVE" | "DISABLED" | "DELETED";
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Status updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ArticleResponse"];
+                };
+            };
+            /** @description Invalid status */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Article not found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -1138,6 +1491,46 @@ export interface operations {
             };
         };
     };
+    getCart: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Cart retrieved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CartResponse"];
+                };
+            };
+        };
+    };
+    clearCart: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Cart cleared */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CartResponse"];
+                };
+            };
+        };
+    };
     me: {
         parameters: {
             query?: never;
@@ -1167,7 +1560,9 @@ export interface operations {
     };
     getByCategory: {
         parameters: {
-            query?: never;
+            query?: {
+                status?: "ACTIVE" | "DISABLED" | "DELETED";
+            };
             header?: never;
             path: {
                 categoryId: number;

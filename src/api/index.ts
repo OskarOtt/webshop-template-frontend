@@ -5,5 +5,6 @@ export * from "./brands";
 export * from "./categories";
 export * from "./orders";
 export * from "./payments";
+export * from "./cart";
 export type { paths, components, operations } from "../generated/schema.d.ts";
 export * from "../generated/models";

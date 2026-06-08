@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getArticle } from "../api/articles";
+import { useCart } from "../context/CartContext";
 import type { ArticleResponse } from "../generated/models";
 import "../styles/ArticlePage.css";
 
 export default function ArticlePage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { addItem } = useCart();
 
   const [article, setArticle] = useState<ArticleResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [addedToCart, setAddedToCart] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -100,8 +103,22 @@ export default function ArticlePage() {
               : "Out of stock"}
           </p>
 
-          <button className="article-page__add-to-cart" disabled={!article.stockQuantity}>
-            Add to Cart
+          <button
+            className="article-page__add-to-cart"
+            disabled={!article.stockQuantity}
+            onClick={async () => {
+              await addItem({
+                articleId: article.id!,
+                quantity: 1,
+                articleName: article.name ?? "Product",
+                mainImageUrl: article.images?.[0],
+                unitPrice: article.price ?? 0,
+              });
+              setAddedToCart(true);
+              setTimeout(() => setAddedToCart(false), 2000);
+            }}
+          >
+            {addedToCart ? "Added!" : "Add to Cart"}
           </button>
         </div>
       </div>

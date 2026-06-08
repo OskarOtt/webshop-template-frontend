@@ -1,8 +1,12 @@
 import { apiClient } from "./client";
 import type { ArticleResponse, ArticleRequest } from "../generated/models";
 
-export async function getArticles(): Promise<ArticleResponse[] | undefined> {
-  const { data, error } = await apiClient.GET("/articles");
+export type ArticleStatus = NonNullable<ArticleResponse["status"]>;
+
+export async function getArticles(status?: ArticleStatus): Promise<ArticleResponse[] | undefined> {
+  const { data, error } = await apiClient.GET("/articles", {
+    params: status ? { query: { status } } : {},
+  });
   if (error) throw error;
   return data;
 }
@@ -15,9 +19,17 @@ export async function getArticle(id: number): Promise<ArticleResponse | undefine
   return data;
 }
 
-export async function getArticlesByCategory(categoryId: number): Promise<ArticleResponse[] | undefined> {
+export async function getArticlesByCategory(categoryId: number, status?: ArticleStatus): Promise<ArticleResponse[] | undefined> {
   const { data, error } = await apiClient.GET("/articles/category/{categoryId}", {
-    params: { path: { categoryId } },
+    params: { path: { categoryId }, ...(status ? { query: { status } } : {}) },
+  });
+  if (error) throw error;
+  return data;
+}
+
+export async function changeArticleStatus(id: number, status: ArticleStatus): Promise<ArticleResponse | undefined> {
+  const { data, error } = await apiClient.PATCH("/articles/{id}/status", {
+    params: { path: { id }, query: { status } },
   });
   if (error) throw error;
   return data;

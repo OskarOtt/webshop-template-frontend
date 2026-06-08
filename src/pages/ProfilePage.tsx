@@ -52,8 +52,8 @@ export default function ProfilePage() {
 
         <button
             className="profile__logout-btn"
-            onClick={() => {
-              logout();
+            onClick={async () => {
+              await logout();
               navigate("/");
             }}
         >

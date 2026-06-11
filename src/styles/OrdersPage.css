@@ -1,0 +1,123 @@
+.orders {
+  padding: 40px 24px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.orders__header {
+  margin-bottom: 24px;
+}
+
+.orders__title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.orders__error {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+}
+
+.orders__loading,
+.orders__empty {
+  color: #6b7280;
+  font-size: 15px;
+  margin-top: 32px;
+  text-align: center;
+}
+
+.orders__table-wrapper {
+  overflow-x: auto;
+}
+
+.orders__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.orders__table th {
+  text-align: left;
+  padding: 10px 14px;
+  background: #f9fafb;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.orders__table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f3f4f6;
+  color: #374151;
+  vertical-align: middle;
+}
+
+.orders__table tr:last-child td {
+  border-bottom: none;
+}
+
+.orders__row {
+  cursor: pointer;
+  outline: none;
+}
+
+.orders__row:hover td {
+  background: #f0f4ff;
+}
+
+.orders__row:focus-visible td {
+  background: #e0e7ff;
+}
+
+.orders__id {
+  color: #6366f1;
+  font-weight: 600;
+}
+
+.orders__customer {
+  color: #374151;
+}
+
+.orders__status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.orders__status--pending {
+  background: #fef9c3;
+  color: #a16207;
+}
+
+.orders__status--confirmed {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.orders__status--shipped {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+
+.orders__status--delivered {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.orders__status--cancelled {
+  background: #fee2e2;
+  color: #dc2626;
+}

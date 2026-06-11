@@ -1,5 +1,5 @@
 import { apiClient } from "./client";
-import type { LoginRequest, RefreshTokenRequest, RegisterRequest, TokenResponse, UserDto } from "../generated/models";
+import type { ForgotPasswordRequest, LoginRequest, RefreshTokenRequest, RegisterRequest, ResetPasswordRequest, TokenResponse, UserDto } from "../generated/models";
 
 export async function login(body: LoginRequest): Promise<TokenResponse | undefined> {
   const { data, error } = await apiClient.POST("/auth/login", { body });
@@ -27,5 +27,14 @@ export async function getMe(): Promise<UserDto | undefined> {
   const { data, error } = await apiClient.GET("/auth/me", {});
   if (error) throw error;
   return data;
+}
+
+export async function forgotPassword(body: ForgotPasswordRequest): Promise<void> {
+  await apiClient.POST("/auth/forgot-password", { body });
+}
+
+export async function resetPassword(body: ResetPasswordRequest): Promise<void> {
+  const { error } = await apiClient.POST("/auth/reset-password", { body });
+  if (error) throw error;
 }
 

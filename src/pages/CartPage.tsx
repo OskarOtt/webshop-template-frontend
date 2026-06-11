@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 import "../styles/CartPage.css";
 
 export default function CartPage() {
   const navigate = useNavigate();
   const { items, itemCount, totalPrice, updateQuantity, removeItem, clearItems, loading } = useCart();
+  const { user } = useAuth();
 
   if (loading) return <p className="cart-page__status">Loading cart…</p>;
 
@@ -91,9 +93,26 @@ export default function CartPage() {
             <p className="cart-page__total">
               Total: <strong>{totalPrice.toFixed(2)} kr</strong>
             </p>
-            <button className="cart-page__checkout-btn" onClick={() => navigate("/")}>
-              Continue shopping
-            </button>
+
+            {!user ? (
+              <p className="cart-page__login-prompt">
+                Please{" "}
+                <button
+                  className="cart-page__login-link"
+                  onClick={() => navigate("/")}
+                >
+                  log in
+                </button>{" "}
+                to proceed to checkout.
+              </p>
+            ) : (
+              <button
+                className="cart-page__checkout-btn"
+                onClick={() => navigate("/checkout")}
+              >
+                Proceed to Checkout
+              </button>
+            )}
           </div>
         </>
       )}

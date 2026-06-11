@@ -3,10 +3,10 @@ import type { OrderResponse, OrderRequest } from "../generated/models";
 
 export type OrderStatus = NonNullable<OrderResponse["status"]>;
 
-export async function listOrders(): Promise<OrderResponse | undefined> {
+export async function listOrders(): Promise<OrderResponse[]> {
   const { data, error } = await apiClient.GET("/orders");
   if (error) throw error;
-  return data;
+  return (data as OrderResponse[]) ?? [];
 }
 
 export async function getOrder(id: number): Promise<OrderResponse | undefined> {

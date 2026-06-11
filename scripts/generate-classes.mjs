@@ -59,9 +59,11 @@ for (const [name, schema] of Object.entries(schemas)) {
   lines.push(`export class ${name} {`);
 
   const properties = schema.properties ?? {};
+  const required = new Set(schema.required ?? []);
   for (const [propName, propSchema] of Object.entries(properties)) {
     const tsType = toTsType(propSchema, allSchemaNames);
-    lines.push(`  ${propName}?: ${tsType};`);
+    const optional = required.has(propName) ? "" : "?";
+    lines.push(`  ${propName}${optional}: ${tsType};`);
   }
 
   if (Object.keys(properties).length > 0) lines.push("");

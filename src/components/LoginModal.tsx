@@ -1,6 +1,7 @@
 import { useState, useEffect, type FormEvent } from "react";
 import { createPortal } from "react-dom";
 import { useAuth } from "../context/AuthContext";
+import { forgotPassword } from "../api/auth";
 import "../styles/LoginModal.css";
 
 interface Props {
@@ -8,7 +9,7 @@ interface Props {
   onClose: () => void;
 }
 
-type Tab = "login" | "register";
+type Tab = "login" | "register" | "forgot";
 
 export default function LoginModal({ open, onClose }: Props) {
   const { login, register } = useAuth();
@@ -27,17 +28,24 @@ export default function LoginModal({ open, onClose }: Props) {
   const [regPassword, setRegPassword] = useState("");
   const [regSuccess, setRegSuccess] = useState(false);
 
+  // Forgot password fields
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotSuccess, setForgotSuccess] = useState(false);
+
   useEffect(() => {
     if (!open) {
       setError("");
       setLoading(false);
       setRegSuccess(false);
+      setForgotSuccess(false);
+      setTab("login");
     }
   }, [open]);
 
   useEffect(() => {
     setError("");
     setRegSuccess(false);
+    setForgotSuccess(false);
   }, [tab]);
 
   useEffect(() => {
@@ -78,10 +86,27 @@ export default function LoginModal({ open, onClose }: Props) {
     }
   }
 
+  async function handleForgotPassword(e: FormEvent) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      await forgotPassword({ email: forgotEmail });
+      setForgotSuccess(true);
+    } catch {
+      // Always show success to avoid leaking whether email exists
+      setForgotSuccess(true);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   if (!open) return null;
 
+  const ariaLabel = tab === "login" ? "Log in" : tab === "register" ? "Register" : "Forgot password";
+
   return createPortal(
-    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-label={tab === "login" ? "Log in" : "Register"}>
+    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-label={ariaLabel}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <button className="modal__close" onClick={onClose} aria-label="Close">✕</button>
 
@@ -108,6 +133,9 @@ export default function LoginModal({ open, onClose }: Props) {
             {error && <p className="modal__error">{error}</p>}
             <button className="modal__submit" type="submit" disabled={loading}>
               {loading ? "Logging in…" : "Log in"}
+            </button>
+            <button type="button" className="modal__link" onClick={() => setTab("forgot")}>
+              Forgot password?
             </button>
           </form>
         )}
@@ -136,6 +164,36 @@ export default function LoginModal({ open, onClose }: Props) {
             </button>
           </form>
         )}
+
+        {tab === "forgot" && (
+          <form className="modal__form" onSubmit={handleForgotPassword}>
+            {forgotSuccess ? (
+              <>
+                <p className="modal__success">
+                  If that email is registered, you'll receive a reset link shortly. (Remember to check your spam folder!)
+                </p>
+                <button type="button" className="modal__link" onClick={() => setTab("login")}>
+                  Back to log in
+                </button>
+              </>
+            ) : (
+              <>
+                <p className="modal__hint">Enter your email address and we'll send you a link to reset your password.</p>
+                <label className="modal__label">
+                  Email
+                  <input className="modal__input" type="email" value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} required autoComplete="email" autoFocus />
+                </label>
+                {error && <p className="modal__error">{error}</p>}
+                <button className="modal__submit" type="submit" disabled={loading}>
+                  {loading ? "Sending…" : "Send reset link"}
+                </button>
+                <button type="button" className="modal__link" onClick={() => setTab("login")}>
+                  Back to log in
+                </button>
+              </>
+            )}
+          </form>
+        )}
       </div>
     </div>,
     document.body
@@ -150,3 +208,4 @@ function extractMessage(err: unknown): string | undefined {
   }
   return undefined;
 }
+

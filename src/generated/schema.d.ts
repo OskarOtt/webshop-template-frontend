@@ -89,7 +89,7 @@ export interface paths {
         /** Update an article (ADMIN only) */
         put: operations["update_2"];
         post?: never;
-        /** Soft-delete an article (ADMIN only) — sets status to DELETED */
+        /** Soft-delete an article (ADMIN only) - sets status to DELETED */
         delete: operations["delete_2"];
         options?: never;
         head?: never;
@@ -201,6 +201,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/reset-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reset password using a token from the reset email */
+        post: operations["resetPassword"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/register": {
         parameters: {
             query?: never;
@@ -263,6 +280,23 @@ export interface paths {
         put?: never;
         /** Log in with existing credentials */
         post: operations["login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/forgot-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Request a password reset email */
+        post: operations["forgotPassword"];
         delete?: never;
         options?: never;
         head?: never;
@@ -394,6 +428,17 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        AddressDto: {
+            firstName?: string;
+            lastName?: string;
+            company?: string;
+            street?: string;
+            addressLine2?: string;
+            area?: string;
+            postalCode?: string;
+            country?: string;
+            phone?: string;
+        };
         OrderItemResponse: {
             /** Format: int64 */
             id?: number;
@@ -418,8 +463,14 @@ export interface components {
             orderDate?: string;
             /** Format: date-time */
             updatedAt?: string;
-            shippingAddress?: string;
+            shippingAddress?: components["schemas"]["AddressDto"];
+            billingAddress?: components["schemas"]["AddressDto"];
             totalPrice?: number;
+            shippingCost?: number;
+            shippingMethod?: string;
+            notes?: string;
+            trackingNumber?: string;
+            currency?: string;
             items?: components["schemas"]["OrderItemResponse"][];
         };
         PaymentInfoResponse: {
@@ -534,13 +585,21 @@ export interface components {
         };
         OrderRequest: {
             items?: components["schemas"]["OrderItemRequest"][];
-            shippingAddress?: string;
+            shippingAddress?: components["schemas"]["AddressDto"];
+            billingAddress?: components["schemas"]["AddressDto"];
+            shippingMethod?: string;
+            notes?: string;
+            currency?: string;
         };
         AddToCartRequest: {
             /** Format: int64 */
             articleId?: number;
             /** Format: int32 */
             quantity?: number;
+        };
+        ResetPasswordRequest: {
+            token: string;
+            newPassword: string;
         };
         TokenResponse: {
             token?: string;
@@ -563,6 +622,10 @@ export interface components {
             /** Format: email */
             email: string;
             password: string;
+        };
+        ForgotPasswordRequest: {
+            /** Format: email */
+            email: string;
         };
         UserDto: {
             firstName?: string;
@@ -1044,7 +1107,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["OrderResponse"];
+                    "*/*": components["schemas"]["OrderResponse"][];
                 };
             };
         };
@@ -1213,6 +1276,42 @@ export interface operations {
             };
         };
     };
+    resetPassword: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResetPasswordRequest"];
+            };
+        };
+        responses: {
+            /** @description Password reset successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation failed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Token invalid, expired, or already used */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     register: {
         parameters: {
             query?: never;
@@ -1335,6 +1434,28 @@ export interface operations {
             };
             /** @description Invalid credentials */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    forgotPassword: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ForgotPasswordRequest"];
+            };
+        };
+        responses: {
+            /** @description If the email exists, a reset link has been sent */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };

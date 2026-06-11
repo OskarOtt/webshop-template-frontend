@@ -41,7 +41,14 @@ export default function ProfilePage() {
           )}
         </dl>
 
-        {user.role === "ADMIN" && (
+        <button
+            className="profile__orders-btn"
+            onClick={() => navigate("/orders")}
+          >
+            My Orders
+          </button>
+
+          {user.role === "ADMIN" && (
           <button
             className="profile__admin-btn"
             onClick={() => navigate("/admin/articles")}

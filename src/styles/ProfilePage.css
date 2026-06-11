@@ -83,6 +83,24 @@
   border-color: #fca5a5;
 }
 
+.profile__orders-btn {
+  padding: 10px 24px;
+  background: #f0f4ff;
+  border: 1px solid #c7d2fe;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4338ca;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  width: 100%;
+}
+
+.profile__orders-btn:hover {
+  background: #e0e7ff;
+  border-color: #a5b4fc;
+}
+
 .profile__admin-btn {
   padding: 10px 24px;
   background: #6366f1;

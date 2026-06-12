@@ -54,6 +54,33 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
+.orders__th {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.orders__th:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.orders__th--active {
+  color: #6366f1;
+  background: #eef2ff;
+}
+
+.orders__sort-icon {
+  margin-left: 4px;
+  font-style: normal;
+  font-size: 11px;
+  color: #6366f1;
+}
+
+.orders__sort-icon--inactive {
+  color: #d1d5db;
+}
+
 .orders__table td {
   padding: 12px 14px;
   border-bottom: 1px solid #f3f4f6;

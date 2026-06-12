@@ -1,9 +1,17 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { listOrders } from "../api/orders";
+import { listOrders } from "../api";
 import type { OrderResponse } from "../generated/models";
 import "../styles/OrdersPage.css";
+
+type SortKey = "id" | "userEmail" | "orderDate" | "status" | "items" | "totalPrice";
+type SortDir = "asc" | "desc";
+
+function SortIcon({ col, sortKey, sortDir }: { col: SortKey; sortKey: SortKey; sortDir: SortDir }) {
+  if (sortKey !== col) return <span className="orders__sort-icon orders__sort-icon--inactive">↕</span>;
+  return <span className="orders__sort-icon">{sortDir === "asc" ? "↑" : "↓"}</span>;
+}
 
 export default function OrdersPage() {
   const { user } = useAuth();
@@ -12,16 +20,10 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<OrderResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [sortKey, setSortKey] = useState<SortKey>("id");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
 
-  useEffect(() => {
-    if (!user) navigate("/", { replace: true });
-  }, [user, navigate]);
-
-  useEffect(() => {
-    if (user) fetchOrders();
-  }, [user]);
-
-  async function fetchOrders() {
+  const fetchOrders = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -32,7 +34,46 @@ export default function OrdersPage() {
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    if (!user) navigate("/", { replace: true });
+  }, [user, navigate]);
+
+  useEffect(() => {
+    if (user) fetchOrders();
+  }, [user, fetchOrders]);
+
+  function handleSort(key: SortKey) {
+    if (key === sortKey) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
   }
+
+  const sortedOrders = useMemo(() => {
+    return [...orders].sort((a, b) => {
+      let aVal: string | number | null | undefined;
+      let bVal: string | number | null | undefined;
+
+      if (sortKey === "items") {
+        aVal = a.items?.length ?? 0;
+        bVal = b.items?.length ?? 0;
+      } else {
+        aVal = a[sortKey] as string | number | null | undefined;
+        bVal = b[sortKey] as string | number | null | undefined;
+      }
+
+      if (aVal == null && bVal == null) return 0;
+      if (aVal == null) return 1;
+      if (bVal == null) return -1;
+
+      const cmp = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+  }, [orders, sortKey, sortDir]);
 
   if (!user) return null;
 
@@ -55,16 +96,30 @@ export default function OrdersPage() {
           <table className="orders__table">
             <thead>
               <tr>
-                <th>Order #</th>
-                {user.role === "ADMIN" && <th>Customer</th>}
-                <th>Date</th>
-                <th>Status</th>
-                <th>Items</th>
-                <th>Total</th>
+                <th className={`orders__th${sortKey === "id" ? " orders__th--active" : ""}`} onClick={() => handleSort("id")}>
+                  Order # <SortIcon col="id" sortKey={sortKey} sortDir={sortDir} />
+                </th>
+                {user.role === "ADMIN" && (
+                  <th className={`orders__th${sortKey === "userEmail" ? " orders__th--active" : ""}`} onClick={() => handleSort("userEmail")}>
+                    Customer <SortIcon col="userEmail" sortKey={sortKey} sortDir={sortDir} />
+                  </th>
+                )}
+                <th className={`orders__th${sortKey === "orderDate" ? " orders__th--active" : ""}`} onClick={() => handleSort("orderDate")}>
+                  Date <SortIcon col="orderDate" sortKey={sortKey} sortDir={sortDir} />
+                </th>
+                <th className={`orders__th${sortKey === "status" ? " orders__th--active" : ""}`} onClick={() => handleSort("status")}>
+                  Status <SortIcon col="status" sortKey={sortKey} sortDir={sortDir} />
+                </th>
+                <th className={`orders__th${sortKey === "items" ? " orders__th--active" : ""}`} onClick={() => handleSort("items")}>
+                  Items <SortIcon col="items" sortKey={sortKey} sortDir={sortDir} />
+                </th>
+                <th className={`orders__th${sortKey === "totalPrice" ? " orders__th--active" : ""}`} onClick={() => handleSort("totalPrice")}>
+                  Total <SortIcon col="totalPrice" sortKey={sortKey} sortDir={sortDir} />
+                </th>
               </tr>
             </thead>
             <tbody>
-              {orders.map((order) => (
+              {sortedOrders.map((order) => (
                 <tr
                   key={order.id}
                   className="orders__row"

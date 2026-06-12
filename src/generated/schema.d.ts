@@ -89,7 +89,7 @@ export interface paths {
         /** Update an article (ADMIN only) */
         put: operations["update_2"];
         post?: never;
-        /** Soft-delete an article (ADMIN only) - sets status to DELETED */
+        /** Soft-delete an article (ADMIN only) — sets status to DELETED */
         delete: operations["delete_2"];
         options?: never;
         head?: never;

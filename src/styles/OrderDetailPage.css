@@ -220,6 +220,14 @@
   border-bottom: none;
 }
 
+.order-detail__item-row {
+  cursor: pointer;
+}
+
+.order-detail__item-row:hover td {
+  background: #f0f4ff;
+}
+
 .order-detail__total-label {
   text-align: right;
   font-weight: 600;

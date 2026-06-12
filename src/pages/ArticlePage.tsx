@@ -29,6 +29,19 @@ export default function ArticlePage() {
   if (error) return <p className="article-page__status article-page__status--error">{error}</p>;
   if (!article) return <p className="article-page__status">Product not found.</p>;
 
+  if (article.status === "DELETED") {
+    return (
+      <main className="article-page">
+        <button className="article-page__back" onClick={() => navigate(-1)}>
+          ← Back
+        </button>
+        <div className="article-page__deleted">
+          <p>This item no longer exists.</p>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="article-page">
       <button className="article-page__back" onClick={() => navigate(-1)}>
@@ -103,23 +116,27 @@ export default function ArticlePage() {
               : "Out of stock"}
           </p>
 
-          <button
-            className="article-page__add-to-cart"
-            disabled={!article.stockQuantity}
-            onClick={async () => {
-              await addItem({
-                articleId: article.id!,
-                quantity: 1,
-                articleName: article.name ?? "Product",
-                mainImageUrl: article.images?.[0],
-                unitPrice: article.price ?? 0,
-              });
-              setAddedToCart(true);
-              setTimeout(() => setAddedToCart(false), 2000);
-            }}
-          >
-            {addedToCart ? "Added!" : "Add to Cart"}
-          </button>
+          {article.status === "DISABLED" ? (
+            <p className="article-page__unavailable">This article is not available.</p>
+          ) : (
+            <button
+              className="article-page__add-to-cart"
+              disabled={!article.stockQuantity}
+              onClick={async () => {
+                await addItem({
+                  articleId: article.id!,
+                  quantity: 1,
+                  articleName: article.name ?? "Product",
+                  mainImageUrl: article.images?.[0],
+                  unitPrice: article.price ?? 0,
+                });
+                setAddedToCart(true);
+                setTimeout(() => setAddedToCart(false), 2000);
+              }}
+            >
+              {addedToCart ? "Added!" : "Add to Cart"}
+            </button>
+          )}
         </div>
       </div>
     </main>

@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { resetPassword } from "../api/auth";
+import { extractApiErrorMessage, getApiErrorStatus } from "../api/errors";
 import "../styles/ResetPasswordPage.css";
 
 export default function ResetPasswordPage() {
@@ -32,11 +33,11 @@ export default function ResetPasswordPage() {
       await resetPassword({ token, newPassword });
       setSuccess(true);
     } catch (err: unknown) {
-      const status = getStatus(err);
+      const status = getApiErrorStatus(err);
       if (status === 401) {
         setError("This reset link is invalid, expired, or has already been used. Please request a new one.");
       } else {
-        setError(extractMessage(err) ?? "Something went wrong. Please try again.");
+        setError(extractApiErrorMessage(err) ?? "Something went wrong. Please try again.");
       }
     } finally {
       setLoading(false);
@@ -105,19 +106,4 @@ export default function ResetPasswordPage() {
       </div>
     </div>
   );
-}
-
-function getStatus(err: unknown): number | undefined {
-  if (err && typeof err === "object" && "status" in err) {
-    return (err as { status: number }).status;
-  }
-  return undefined;
-}
-
-function extractMessage(err: unknown): string | undefined {
-  if (err && typeof err === "object" && "message" in err) {
-    const msg = (err as { message: unknown }).message;
-    if (typeof msg === "string") return msg;
-  }
-  return undefined;
 }

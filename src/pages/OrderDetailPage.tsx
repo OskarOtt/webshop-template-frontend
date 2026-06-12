@@ -175,7 +175,12 @@ export default function OrderDetailPage() {
               </thead>
               <tbody>
                 {(order.items ?? []).map((item) => (
-                  <tr key={item.id}>
+                  <tr
+                    key={item.id}
+                    className="order-detail__item-row"
+                    onClick={() => item.articleId && navigate(`/articles/${item.articleId}`)}
+                    title={item.articleId ? `View ${item.articleName ?? "article"}` : undefined}
+                  >
                     <td>{item.articleName ?? `Article #${item.articleId}`}</td>
                     <td>{item.unitPrice != null ? `${item.unitPrice.toFixed(2)} kr` : "—"}</td>
                     <td>{item.quantity ?? 0}</td>

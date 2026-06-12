@@ -45,18 +45,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const data = await apiLogin(body);
     if (!data?.token) throw new Error("No token received");
     saveTokens(data.token, data.refreshToken);
-    setToken(data.token);
+    // Fetch user and merge guest cart before updating React state so that
+    // CartContext's loadServerCart (triggered by setToken) sees the merged cart.
     const me = await getMe();
-    setUser(me ?? null);
     await mergeGuestCartIntoServer();
+    setToken(data.token);
+    setUser(me ?? null);
   }, []);
 
   const register = useCallback(async (body: RegisterRequest) => {
     const data = await apiRegister(body);
     if (!data?.token) throw new Error("No token received");
     saveTokens(data.token, data.refreshToken);
-    setToken(data.token);
     const me = await getMe();
+    await mergeGuestCartIntoServer();
+    setToken(data.token);
     setUser(me ?? null);
   }, []);
 

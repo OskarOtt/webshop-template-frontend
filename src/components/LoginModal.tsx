@@ -2,6 +2,7 @@ import { useState, useEffect, type FormEvent } from "react";
 import { createPortal } from "react-dom";
 import { useAuth } from "../context/AuthContext";
 import { forgotPassword } from "../api/auth";
+import { extractApiErrorMessage, getApiErrorStatus } from "../api/errors";
 import "../styles/LoginModal.css";
 
 interface Props {
@@ -26,7 +27,6 @@ export default function LoginModal({ open, onClose }: Props) {
   const [regFirstName, setRegFirstName] = useState("");
   const [regLastName, setRegLastName] = useState("");
   const [regPassword, setRegPassword] = useState("");
-  const [regSuccess, setRegSuccess] = useState(false);
 
   // Forgot password fields
   const [forgotEmail, setForgotEmail] = useState("");
@@ -36,7 +36,6 @@ export default function LoginModal({ open, onClose }: Props) {
     if (!open) {
       setError("");
       setLoading(false);
-      setRegSuccess(false);
       setForgotSuccess(false);
       setTab("login");
     }
@@ -44,7 +43,6 @@ export default function LoginModal({ open, onClose }: Props) {
 
   useEffect(() => {
     setError("");
-    setRegSuccess(false);
     setForgotSuccess(false);
   }, [tab]);
 
@@ -64,7 +62,12 @@ export default function LoginModal({ open, onClose }: Props) {
       await login({ email: loginEmail, password: loginPassword });
       onClose();
     } catch (err: unknown) {
-      setError(extractMessage(err) ?? "Login failed. Please try again.");
+      const status = getApiErrorStatus(err);
+      if (status === 401) {
+        setError("Incorrect email or password.");
+      } else {
+        setError(extractApiErrorMessage(err) ?? "Login failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -76,11 +79,14 @@ export default function LoginModal({ open, onClose }: Props) {
     setLoading(true);
     try {
       await register({ email: regEmail, firstName: regFirstName, lastName: regLastName, password: regPassword });
-      setRegSuccess(true);
-      setTab("login");
-      setLoginEmail(regEmail);
+      onClose();
     } catch (err: unknown) {
-      setError(extractMessage(err) ?? "Registration failed. Please try again.");
+      const status = getApiErrorStatus(err);
+      if (status === 409) {
+        setError("That email address is already registered. Try logging in instead.");
+      } else {
+        setError(extractApiErrorMessage(err) ?? "Registration failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -121,7 +127,6 @@ export default function LoginModal({ open, onClose }: Props) {
 
         {tab === "login" && (
           <form className="modal__form" onSubmit={handleLogin}>
-            {regSuccess && <p className="modal__success">Account created! You can log in now.</p>}
             <label className="modal__label">
               Email
               <input className="modal__input" type="email" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required autoComplete="email" autoFocus />
@@ -200,12 +205,4 @@ export default function LoginModal({ open, onClose }: Props) {
   );
 }
 
-function extractMessage(err: unknown): string | undefined {
-  if (err && typeof err === "object") {
-    if ("message" in err && typeof (err as { message: unknown }).message === "string") {
-      return (err as { message: string }).message;
-    }
-  }
-  return undefined;
-}
 

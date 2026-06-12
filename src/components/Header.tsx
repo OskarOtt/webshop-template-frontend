@@ -1,27 +1,25 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
-import LoginModal from "./LoginModal";
+import { useUI } from "../context/UIContext";
 import "../styles/Header.css";
 
 export default function Header() {
   const { user } = useAuth();
   const { itemCount } = useCart();
+  const { openLoginModal } = useUI();
   const navigate = useNavigate();
-  const [modalOpen, setModalOpen] = useState(false);
 
   function handleProfileClick() {
     if (user) {
       navigate("/profile");
     } else {
-      setModalOpen(true);
+      openLoginModal();
     }
   }
 
   return (
-    <>
-      <header className="header">
+    <header className="header">
         <div className="header__logo" onClick={() => navigate("/")} role="button" tabIndex={0}>
           <div className="header__logo-icon" aria-hidden="true">🛒</div>
           <span className="header__logo-text">ShopApp</span>
@@ -60,8 +58,5 @@ export default function Header() {
           </button>
         </div>
       </header>
-
-      <LoginModal open={modalOpen} onClose={() => setModalOpen(false)} />
-    </>
   );
 }

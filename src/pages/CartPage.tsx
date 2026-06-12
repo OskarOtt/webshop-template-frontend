@@ -1,12 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import { useUI } from "../context/UIContext";
 import "../styles/CartPage.css";
 
 export default function CartPage() {
   const navigate = useNavigate();
   const { items, itemCount, totalPrice, updateQuantity, removeItem, clearItems, loading } = useCart();
   const { user } = useAuth();
+  const { openLoginModal } = useUI();
 
   if (loading) return <p className="cart-page__status">Loading cart…</p>;
 
@@ -99,7 +101,7 @@ export default function CartPage() {
                 Please{" "}
                 <button
                   className="cart-page__login-link"
-                  onClick={() => navigate("/")}
+                  onClick={openLoginModal}
                 >
                   log in
                 </button>{" "}

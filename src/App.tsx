@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
+import LoginModal from "./components/LoginModal";
+import { UIProvider, useUI } from "./context/UIContext";
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import AdminArticlesPage from "./pages/AdminArticlesPage";
@@ -13,9 +15,11 @@ import CheckoutPage from "./pages/CheckoutPage";
 import CheckoutSuccessPage from "./pages/CheckoutSuccessPage";
 import CheckoutCancelPage from "./pages/CheckoutCancelPage";
 
-function App() {
+function AppShell() {
+  const { loginModalOpen, closeLoginModal } = useUI();
+
   return (
-    <BrowserRouter>
+    <>
       <Header />
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -32,6 +36,17 @@ function App() {
         <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
         <Route path="/checkout/cancel" element={<CheckoutCancelPage />} />
       </Routes>
+      <LoginModal open={loginModalOpen} onClose={closeLoginModal} />
+    </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <UIProvider>
+        <AppShell />
+      </UIProvider>
     </BrowserRouter>
   );
 }

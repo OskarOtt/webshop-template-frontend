@@ -1,11 +1,12 @@
 import createClient from "openapi-fetch";
 import type { paths } from "../generated/schema.d.ts";
+import { API_BASE_URL } from "../env";
 
 export const TOKEN_KEY = "auth_token";
 export const REFRESH_TOKEN_KEY = "auth_refresh_token";
 
 export const apiClient = createClient<paths>({
-  baseUrl: import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080",
+  baseUrl: API_BASE_URL,
 });
 
 // Inject stored JWT token into every request
@@ -26,7 +27,7 @@ apiClient.use({
 
     // Attempt silent token refresh
     const refreshResponse = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080"}/auth/refresh`,
+      `${API_BASE_URL}/auth/refresh`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

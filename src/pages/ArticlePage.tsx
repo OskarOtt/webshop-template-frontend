@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getArticle } from "../api/articles";
+import { getArticle } from "../api";
 import { useCart } from "../context/CartContext";
 import type { ArticleResponse } from "../generated/models";
 import "../styles/ArticlePage.css";

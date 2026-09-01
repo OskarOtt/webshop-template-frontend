@@ -32,7 +32,7 @@ jobs:
 
       - name: Build
         env:
-          VITE_API_BASE_URL: https://webshop-template-backend.onrender.com
+          VITE_API_BASE_URL: https://webshop-api.oskott.com
         run: npm run build
 
       - name: Setup Pages

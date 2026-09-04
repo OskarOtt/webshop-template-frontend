@@ -43,7 +43,7 @@ function AppShell() {
 
 function App() {
   return (
-    <BrowserRouter basename="/webshop-template-frontend">
+    <BrowserRouter>
       <UIProvider>
         <AppShell />
       </UIProvider>
